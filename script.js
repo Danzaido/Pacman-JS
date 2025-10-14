@@ -38,7 +38,7 @@ document.addEventListener("keydown", (event) => {
 //Condicion de Victoria
 
 function winCondition() {
-  if (scoreValue >= 2980) {
+  if (scoreValue >= 2320) {
 
     currentDirection = null;
     desiredDirection = null;
@@ -218,11 +218,13 @@ function eatPowerUp() {
 }
 
 // Vars Fantasmas
+
   let eatable = false;
   let eatableTimer = 0;
   const ghostWidth = 22;
   const ghostHeight = 22;
   const arcRadius = ghostWidth / 2;
+  
 
 const ghosts = [
   { x: 24 * 15, y: 24 * 14, startX: 24 * 15, startY: 24 * 14, color: "red", direction: Movementdirection.left, speed: 2, eaten: false },
@@ -231,7 +233,7 @@ const ghosts = [
   { x: 24 * 13, y: 24 * 14, startX: 24 * 13, startY: 24 * 14, color: "orange", direction: Movementdirection.down, speed: 2, eaten: false },
 ];
 
-const ghostSpeed = 2;
+
 
 //Funciones de Dibujo
 
@@ -284,7 +286,6 @@ function handleEatableMode() {
   }
 }
  
-
 //Controles
 
 function initControls() {
@@ -312,7 +313,6 @@ function initControls() {
       desiredDirection = Movementdirection.down;
     }
   }
-
 }
 
 //Funciones de Movimiento
