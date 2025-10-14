@@ -52,16 +52,25 @@ function loseCondition() {
   const hitboxRadius = pacmanSize / 2 * 0.8; 
 
   for (const g of ghosts) {
+    if (g.eaten) continue;
     const ghostCenterX = g.x + ghostWidth / 2;
     const ghostCenterY = g.y + ghostHeight / 2;
     const dx = pacmanCenterX - ghostCenterX;
     const dy = pacmanCenterY - ghostCenterY;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (distance < hitboxRadius) {
-      gameRunning = false;
-      youLose = true;
-      break;
+ if (distance < hitboxRadius) {
+      if (eatable && g.color === "blue") {
+        g.eaten = true;
+        g.x = g.startX;
+        g.y = g.startY;
+        score.textContent = scoreValue;
+        setTimeout(() => { g.eaten = false; }, 2000); 
+      } else {
+        gameRunning = false;
+        youLose = true;
+        break;
+      }
     }
   }
 }
@@ -215,13 +224,13 @@ function eatPowerUp() {
   const ghostHeight = 22;
   const arcRadius = ghostWidth / 2;
 
-  const ghosts = [
-  { x: 24 * 15, y: 24 * 14, color: "red", direction: Movementdirection.left, speed: 2 },
-  { x: 24 * 12, y: 24 * 14, color: "pink", direction: Movementdirection.right, speed: 1 },
-  { x: 24 * 14, y: 24 * 14, color: "cyan", direction: Movementdirection.up, speed: 1 },
-  { x: 24 * 13, y: 24 * 14, color: "orange", direction: Movementdirection.down, speed: 2 },
- 
+const ghosts = [
+  { x: 24 * 15, y: 24 * 14, startX: 24 * 15, startY: 24 * 14, color: "red", direction: Movementdirection.left, speed: 2, eaten: false },
+  { x: 24 * 12, y: 24 * 14, startX: 24 * 12, startY: 24 * 14, color: "pink", direction: Movementdirection.right, speed: 1, eaten: false },
+  { x: 24 * 14, y: 24 * 14, startX: 24 * 14, startY: 24 * 14, color: "cyan", direction: Movementdirection.up, speed: 1, eaten: false },
+  { x: 24 * 13, y: 24 * 14, startX: 24 * 13, startY: 24 * 14, color: "orange", direction: Movementdirection.down, speed: 2, eaten: false },
 ];
+
 const ghostSpeed = 2;
 
 //Funciones de Dibujo
@@ -244,25 +253,36 @@ function cleanCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function drawGhost(x, y, color) {
+function drawGhost(g) {
+  if (g.eaten) return; // No dibujar fantasmas comidos temporalmente
   const ghostWidth = 22;
   const ghostHeight = 22;
   const arcRadius = ghostWidth / 2;
 
   ctx.beginPath();
-  ctx.arc(x + ghostWidth / 2, y + arcRadius, arcRadius, Math.PI, 0, false);
-  ctx.lineTo(x + ghostWidth, y + ghostHeight);
-  ctx.lineTo(x, y + ghostHeight);
-  ctx.lineTo(x, y + arcRadius);
+  ctx.arc(g.x + ghostWidth / 2, g.y + arcRadius, arcRadius, Math.PI, 0, false);
+  ctx.lineTo(g.x + ghostWidth, g.y + ghostHeight);
+  ctx.lineTo(g.x, g.y + ghostHeight);
+  ctx.lineTo(g.x, g.y + arcRadius);
   ctx.closePath();
-  ctx.fillStyle = color;
+  ctx.fillStyle = g.color;
   ctx.fill();
 }
 
 function drawGhosts() {
-  ghosts.forEach(g => drawGhost(g.x, g.y, g.color));
+  ghosts.forEach(g => drawGhost(g));
 }
-
+function handleEatableMode() {
+  if (eatable) {
+    eatableTimer--;
+    if (eatableTimer <= 0) {
+      eatable = false;
+      ghosts.forEach((g, i) => {
+        g.color = ["red", "pink", "cyan", "orange"][i];
+      });
+    }
+  }
+}
  
 
 //Controles
