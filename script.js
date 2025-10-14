@@ -254,7 +254,7 @@ function cleanCanvas() {
 }
 
 function drawGhost(g) {
-  if (g.eaten) return; // No dibujar fantasmas comidos temporalmente
+  if (g.eaten) return; 
   const ghostWidth = 22;
   const ghostHeight = 22;
   const arcRadius = ghostWidth / 2;
