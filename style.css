@@ -1,0 +1,19 @@
+body {
+  background-color: black;
+}
+
+span{
+  color: white;
+  font-size: 20px;
+  display: block;
+  text-align: center;
+  justify-content: center;
+  
+}
+canvas {
+  display: block;
+  margin: auto;
+  background-color: #000000;
+  border: 2px solid #ffffff;
+  margin-top: 25px;
+}
