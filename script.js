@@ -201,9 +201,9 @@ function eatPowerUp() {
   let row = Math.floor(pacmanY / 24);
   let column = Math.floor(pacmanX / 24);
   if (map[row][column] === powerUp) {
-    map[row][column] = path; // Elimina el powerUp
+    map[row][column] = path; 
     eatable = true;
-    eatableTimer = 600; // Duración del modo azul (por ejemplo, 10 segundos si tu loop es 60fps)
+    eatableTimer = 600; 
     ghosts.forEach(g => g.color = "blue");
   }
 }
@@ -339,14 +339,12 @@ function moveGhosts() {
       let dir = g.direction;
 
       if (eatable) {
-        // Fantasmas huyen: eligen la dirección opuesta a Pacman
         if (Math.abs(dx) > Math.abs(dy)) {
           dir = dx > 0 ? Movementdirection.left : Movementdirection.right;
         } else {
           dir = dy > 0 ? Movementdirection.up : Movementdirection.down;
         }
       } else {
-        // Fantasmas persiguen
         if (Math.abs(dx) > Math.abs(dy)) {
           dir = dx > 0 ? Movementdirection.right : Movementdirection.left;
         } else {
@@ -394,7 +392,6 @@ function handleEatableMode() {
     if (eatableTimer <= 0) {
       eatable = false;
       ghosts.forEach(g => {
-        // Restaura el color original
         if (g.color === "blue") {
           if (g === ghosts[0]) g.color = "red";
           if (g === ghosts[1]) g.color = "pink";
