@@ -2,8 +2,16 @@ const canvas = document.getElementById("pacman");
 const ctx = canvas.getContext("2d");
 const score = document.getElementById("score");
 const introAudio = document.getElementById("intro");
+const chompAudio = document.getElementById("chomp");
+const eatfruitAudio = document.getElementById("eatfruit");
+const eatghostAudio = document.getElementById("eatghost");
+const deathAudio = document.getElementById("death");
 introAudio.loop = false;
 introAudio.volume = 0.1;
+chompAudio.volume = 0.1;
+eatfruitAudio.volume = 0.1;
+eatghostAudio.volume = 0.1;
+deathAudio.volume = 0.1;
 
 let gameRunning = false;
 let gameStarted = false;
@@ -19,22 +27,20 @@ function playIntro() {
 function stopIntro() {
   try { introAudio.pause(); introAudio.currentTime = 0; } catch(e){}
 }
-document.addEventListener("keydown", (event) => {
-  if (!gameStarted && (event.code === "Space" || event.code === "Enter")) {
-    playIntro();
-    gameStarted = true;
-    gameRunning = true;
-  }
-});
+
 
 //Inicio del Juego
 
 document.addEventListener("keydown", (event) => {
   if (!gameStarted && (event.code === "Space" || event.code === "Enter")) {
+    playIntro();
     gameStarted = true;
-    gameRunning = true;
+    setTimeout(() => {
+      gameRunning = true;
+    }, 4000);
   }
 });
+
 //Condicion de Victoria
 
 function winCondition() {
@@ -65,10 +71,14 @@ function loseCondition() {
         g.x = g.startX;
         g.y = g.startY;
         score.textContent = scoreValue;
+        eatghostAudio.currentTime = 0;
+        eatghostAudio.play();
         setTimeout(() => { g.eaten = false; }, 2000); 
       } else {
         gameRunning = false;
         youLose = true;
+        deathAudio.currentTime = 0;
+        deathAudio.play();
         break;
       }
     }
@@ -204,6 +214,10 @@ function eatDot(){
     map[row][column] = 0;
     scoreValue += 10;
     score.textContent = scoreValue;
+       if (chompAudio.paused) {
+      chompAudio.currentTime = 0;
+      chompAudio.play();
+    }
   }
 }
 function eatPowerUp() {
@@ -214,6 +228,8 @@ function eatPowerUp() {
     eatable = true;
     eatableTimer = 600; 
     ghosts.forEach(g => g.color = "blue");
+    eatfruitAudio.currentTime = 0;
+    eatfruitAudio.play();
   }
 }
 
@@ -353,6 +369,7 @@ function isGhostCellOccupied(nextX, nextY, self) {
 }
 function moveGhosts() {
   ghosts.forEach(g => {
+    if (g.eaten) return; // Fantasma comido, no se mueve
     if (Number.isInteger(g.x / 24) && Number.isInteger(g.y / 24)) {
       let dx = pacmanX - g.x;
       let dy = pacmanY - g.y;
@@ -470,7 +487,7 @@ function draw() {
   } else if (!gameRunning && youLose) {
     ctx.fillStyle = "red";
     ctx.fillText("¡HAS PERDIDO!", canvas.width / 2, canvas.height / 2);
-  } else if (!gameRunning && !youLose) {
+  } else if (scoreValue >= 2320) {
     ctx.fillText("¡TU GANAS!", canvas.width / 2, canvas.height / 2);
   }
 }
